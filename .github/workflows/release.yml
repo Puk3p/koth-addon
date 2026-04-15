@@ -12,6 +12,9 @@ jobs:
   release:
     name: Verify & Release
     runs-on: ubuntu-latest
+    env:
+      DISCORD_WEBHOOK: ${{ secrets.URL_WEBHOOK_OPERATOR }}
+      DISCORD_ROLE_ID: ${{ secrets.OPERATOR_ROLE_ID }}
 
     steps:
       - name: Checkout code
@@ -48,14 +51,14 @@ jobs:
           prerelease: false
 
       - name: "Step 3: Post Discord Embed"
-        if: ${{ secrets.URL_WEBHOOK_OPERATOR != '' && secrets.OPERATOR_ROLE_ID != '' }}
+        if: ${{ env.DISCORD_WEBHOOK != '' && env.DISCORD_ROLE_ID != '' }}
         run: |
           JAR_NAME=$(basename "$(ls target/fkoth-wins-*.jar | grep -v '^original-' | head -n 1)")
-          WEBHOOK="${{ secrets.URL_WEBHOOK_OPERATOR }}"
+          WEBHOOK="$DISCORD_WEBHOOK"
 
           curl -X POST -H "Content-Type: application/json" -d '{
             "username": "puk3p CI/CD",
-            "content": "<@&'"${{ secrets.OPERATOR_ROLE_ID }}"'> New FKoth build available!",
+            "content": "<@&'"$DISCORD_ROLE_ID"'> New FKoth build available!",
             "embeds": [
               {
                 "title": "FKothWins Release",
@@ -72,10 +75,10 @@ jobs:
           }' "$WEBHOOK"
 
       - name: "Step 4: Upload JAR to Discord"
-        if: ${{ secrets.URL_WEBHOOK_OPERATOR != '' }}
+        if: ${{ env.DISCORD_WEBHOOK != '' }}
         run: |
           JAR_FILE=$(ls target/fkoth-wins-*.jar | grep -v '^original-' | head -n 1)
-          WEBHOOK="${{ secrets.URL_WEBHOOK_OPERATOR }}"
+          WEBHOOK="$DISCORD_WEBHOOK"
           curl -X POST \
                -F "file=@$JAR_FILE" \
                -F 'payload_json={"username":"puk3p CI/CD"}' \
