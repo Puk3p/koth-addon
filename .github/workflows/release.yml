@@ -17,7 +17,7 @@ jobs:
       DISCORD_WEBHOOK: ${{ secrets.URL_WEBHOOK_OPERATOR }}
       DISCORD_ROLE_ID: ${{ secrets.OPERATOR_ROLE_ID }}
       # Change this manually to your Discord thread/subchannel ID.
-      DISCORD_THREAD_ID: "1489410922706505871"
+      DISCORD_THREAD_ID: "1494091912175419423"
 
     steps:
       - name: Checkout code
