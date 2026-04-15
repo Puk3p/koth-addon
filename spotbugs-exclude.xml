@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+  <!-- Kotlin + Bukkit plugin patterns that SpotBugs reports as false positives in this codebase -->
+  <Match>
+    <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+  </Match>
+
+  <Match>
+    <Bug pattern="NP_NONNULL_RETURN_VIOLATION,NP_NULL_ON_SOME_PATH"/>
+  </Match>
+
+  <Match>
+    <Bug pattern="BC_BAD_CAST_TO_ABSTRACT_COLLECTION"/>
+  </Match>
+
+  <Match>
+    <Bug pattern="HE_INHERITS_EQUALS_USE_HASHCODE"/>
+  </Match>
+
+  <Match>
+    <Bug pattern="RpC_REPEATED_CONDITIONAL_TEST"/>
+  </Match>
+
+  <Match>
+    <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+  </Match>
+</FindBugsFilter>
