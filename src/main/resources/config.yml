@@ -1,0 +1,41 @@
+storage:
+  type: YAML
+  file: faction-wins.yml
+
+rules:
+  ignore-no-faction-winner: true
+  keep-wins-on-player-leave: true
+  delete-wins-on-faction-disband: true
+  allow-offline-player-lookup: true
+
+top:
+  list-size: 10
+  hologram:
+    enabled: true
+    title: "&6&lTop 5 KOTH Factions"
+    entries: 5
+    location:
+      world: world
+      x: 0.5
+      y: 70.0
+      z: 0.5
+
+placeholderapi:
+  enabled: true
+  placeholders:
+    - "fkoth_faction_wins"
+    - "fkoth_top_1_name"
+    - "fkoth_top_1_wins"
+
+integration:
+  koth:
+    enabled: true
+    plugin-name: "KoTH"
+    end-event-class: "subside.plugins.koth.events.KothEndEvent"
+    winner-paths:
+      - "getWinner"
+      - "getCappingPlayer"
+      - "getRunningKoth.getWinner"
+      - "getRunningKoth.getCappingPlayer"
+  factions:
+    disband-event-class: "com.massivecraft.factions.event.FactionDisbandEvent"

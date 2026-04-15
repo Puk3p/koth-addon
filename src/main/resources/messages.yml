@@ -1,0 +1,19 @@
+prefix: "&8[&6FKoth&8] "
+
+no-permission: "&cNu ai permisiune pentru această comandă."
+player-not-found: "&cJucătorul nu a fost găsit."
+faction-not-found: "&cFacțiunea nu a fost găsită."
+no-faction: "&eNu ai facțiune."
+ignored-no-faction: "&eWin ignorat: jucătorul nu are facțiune."
+
+add-success: "&aS-au adăugat {amount} win-uri la facțiunea {faction}."
+remove-success: "&aS-au scăzut {amount} win-uri din facțiunea {faction}."
+set-success: "&aWin-urile facțiunii {faction} au fost setate la {amount}."
+
+stats-self: "&6Facțiunea ta (&e{faction}&6) are &e{wins} &6win-uri KOTH."
+
+top-header: "&6&lTop 10 facțiuni KOTH"
+top-line: "&e#{position}. &f{faction} &7- &6{wins}"
+
+disband-cleanup: "&7Datele KOTH pentru facțiunea {faction} au fost șterse (disband)."
+reload-success: "&aConfigurile FKoth au fost reîncărcate."

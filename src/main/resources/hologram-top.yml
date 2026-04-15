@@ -1,0 +1,10 @@
+enabled: true
+provider: DECENTHOLOGRAMS
+
+lines:
+  - "&6&lTop 5 KOTH"
+  - "&e#1 &f%fkoth_top_1_name% &7- &6%fkoth_top_1_wins%"
+  - "&e#2 &f%fkoth_top_2_name% &7- &6%fkoth_top_2_wins%"
+  - "&e#3 &f%fkoth_top_3_name% &7- &6%fkoth_top_3_wins%"
+  - "&e#4 &f%fkoth_top_4_name% &7- &6%fkoth_top_4_wins%"
+  - "&e#5 &f%fkoth_top_5_name% &7- &6%fkoth_top_5_wins%"

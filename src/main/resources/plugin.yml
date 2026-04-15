@@ -1,0 +1,24 @@
+name: FKothWins
+main: ro.puk3p.fkoth.FKothPlugin
+version: 1.0.0
+authors: [puk3p]
+depend: []
+softdepend:
+  - KoTH
+  - Factions
+  - PlaceholderAPI
+description: Sistem KOTH wins pentru facțiuni
+
+commands:
+  fkoth:
+    description: Comanda principală FKoth
+    usage: /fkoth <add|remove|set|stats|top>
+    aliases: [fkw]
+
+permissions:
+  fkoth.admin:
+    description: Acces la /fkoth add/remove/set
+    default: op
+  fkoth.player:
+    description: Acces la /fkoth stats și /fkoth top
+    default: true
