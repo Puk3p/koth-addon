@@ -71,6 +71,7 @@ class FkothCommand(
                     mapOf("{amount}" to amount.toString(), "{faction}" to (faction ?: "-"))
                 )
             )
+            AddByPlayerResult.PLAYER_NOT_FOUND -> sender.sendMessage(plugin.message(MessageKeys.PLAYER_NOT_FOUND))
             AddByPlayerResult.PLAYER_OFFLINE -> sender.sendMessage(plugin.message(MessageKeys.PLAYER_OFFLINE))
             AddByPlayerResult.NO_FACTION -> sender.sendMessage(plugin.message(MessageKeys.IGNORED_NO_FACTION))
         }
