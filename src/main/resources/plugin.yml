@@ -7,6 +7,7 @@ softdepend:
   - KoTH
   - Factions
   - PlaceholderAPI
+  - DecentHolograms
 description: Sistem KOTH wins pentru facțiuni
 
 commands:

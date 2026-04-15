@@ -6,6 +6,7 @@ import ro.puk3p.fkoth.command.FkothCommand
 import ro.puk3p.fkoth.config.ConfigKeys
 import ro.puk3p.fkoth.config.MessageKeys
 import ro.puk3p.fkoth.integration.factions.FactionsUUIDAdapter
+import ro.puk3p.fkoth.integration.hologram.TopHologramHook
 import ro.puk3p.fkoth.integration.koth.KothHookListener
 import ro.puk3p.fkoth.integration.placeholder.FKothPlaceholderExpansion
 import ro.puk3p.fkoth.listener.FactionDisbandListener
@@ -21,6 +22,7 @@ class FKothPlugin : JavaPlugin() {
         private set
 
     private lateinit var messages: YamlConfiguration
+    private var topHologramHook: TopHologramHook? = null
 
     override fun onEnable() {
         saveDefaultConfig()
@@ -44,11 +46,13 @@ class FKothPlugin : JavaPlugin() {
         registerKothHook()
         registerFactionDisbandHook()
         registerPlaceholderExpansion()
+        registerTopHologramHook()
 
         logger.info("FKoth enabled.")
     }
 
     override fun onDisable() {
+        topHologramHook?.stop()
         service.save()
     }
 
@@ -108,6 +112,12 @@ class FKothPlugin : JavaPlugin() {
         } else {
             logger.warning("[FKoth] KoTH hook not enabled. Plugin/event not found.")
         }
+    }
+
+    private fun registerTopHologramHook() {
+        val hook = TopHologramHook(this, service)
+        hook.start()
+        topHologramHook = hook
     }
 
     private fun registerFactionDisbandHook() {

@@ -12,7 +12,11 @@ top:
   list-size: 10
   hologram:
     enabled: true
+    id: "fkoth_top5"
+    refresh-seconds: 15
     title: "&6&lTop 5 KOTH Factions"
+    line-format: "&e#{position}. &f{faction} &7- &6{wins}"
+    empty-line-format: "&e#{position}. &7-"
     entries: 5
     location:
       world: world
