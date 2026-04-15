@@ -21,7 +21,7 @@ data class FkothRules(
 class FkothService(
     private val repository: FactionWinsRepository,
     private val factionsAdapter: FactionsAdapter,
-    private val rules: FkothRules
+    private var rules: FkothRules
 ) {
 
     fun addWinsForPlayer(playerName: String, amount: Int): Pair<AddByPlayerResult, String?> {
@@ -77,6 +77,12 @@ class FkothService(
     }
 
     fun getTrackedFactionCount(): Int = repository.top(Int.MAX_VALUE).size
+
+    fun getFactionForPlayerName(playerName: String): String? = factionsAdapter.getFactionNameByPlayerName(playerName)
+
+    fun updateRules(newRules: FkothRules) {
+        rules = newRules
+    }
 
     fun save() = repository.save()
 }

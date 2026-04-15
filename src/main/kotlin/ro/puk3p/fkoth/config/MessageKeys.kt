@@ -7,6 +7,8 @@ object MessageKeys {
     const val USAGE_ADD = "usage-add"
     const val USAGE_REMOVE = "usage-remove"
     const val USAGE_SET = "usage-set"
+    const val USAGE_RELOAD = "usage-reload"
+    const val USAGE_DEBUG = "usage-debug"
     const val PLAYER_NOT_FOUND = "player-not-found"
     const val PLAYER_OFFLINE = "player-offline"
     const val FACTION_NOT_FOUND = "faction-not-found"
@@ -22,4 +24,7 @@ object MessageKeys {
     const val TOP_HEADER = "top-header"
     const val TOP_LINE = "top-line"
     const val DISBAND_CLEANUP = "disband-cleanup"
+    const val RELOAD_SUCCESS = "reload-success"
+    const val DEBUG_HEADER = "debug-header"
+    const val DEBUG_LINE = "debug-line"
 }

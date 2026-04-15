@@ -9,6 +9,7 @@ class FKothPlaceholderExpansion(
 ) : PlaceholderExpansion() {
 
     private val topRegex = Regex("top_(\\d+)_(name|wins)")
+    private val playerFactionWinsRegex = Regex("player_faction_wins_(.+)")
 
     override fun getIdentifier(): String = "fkoth"
 
@@ -19,6 +20,16 @@ class FKothPlaceholderExpansion(
     override fun persist(): Boolean = true
 
     override fun onPlaceholderRequest(player: Player?, params: String): String {
+        val byPlayerMatch = playerFactionWinsRegex.matchEntire(params)
+        if (byPlayerMatch != null) {
+            val playerName = byPlayerMatch.groupValues[1]
+            if (playerName.isBlank()) {
+                return "0"
+            }
+            val faction = service.getFactionForPlayerName(playerName) ?: return "0"
+            return service.getWinsForFaction(faction).toString()
+        }
+
         if (params.equals("top_size", ignoreCase = true)) {
             return service.getTrackedFactionCount().toString()
         }

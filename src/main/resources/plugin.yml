@@ -13,7 +13,7 @@ description: Sistem KOTH wins pentru facțiuni
 commands:
   fkoth:
     description: Comanda principală FKoth
-    usage: /fkoth <add|remove|set|stats|top>
+    usage: /fkoth <add|remove|set|reload|debug|stats|top>
     aliases: [fkw]
 
 permissions:

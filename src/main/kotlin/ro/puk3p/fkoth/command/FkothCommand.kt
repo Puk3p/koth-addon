@@ -24,6 +24,8 @@ class FkothCommand(
             "add" -> handleAdd(sender, args)
             "remove" -> handleRemove(sender, args)
             "set" -> handleSet(sender, args)
+            "reload" -> handleReload(sender, args)
+            "debug" -> handleDebug(sender, args)
             "stats" -> handleStats(sender)
             "top" -> handleTop(sender)
             else -> sender.sendMessage(plugin.message(MessageKeys.USAGE_MAIN))
@@ -39,7 +41,7 @@ class FkothCommand(
         args: Array<out String>
     ): MutableList<String> {
         if (args.size == 1) {
-            return mutableListOf("add", "remove", "set", "stats", "top")
+            return mutableListOf("add", "remove", "set", "reload", "debug", "stats", "top")
                 .filter { it.startsWith(args[0], ignoreCase = true) }
                 .toMutableList()
         }
@@ -127,6 +129,41 @@ class FkothCommand(
                 mapOf("{amount}" to amount.toString(), "{faction}" to faction)
             )
         )
+    }
+
+    private fun handleReload(sender: CommandSender, args: Array<out String>) {
+        if (!sender.hasPermission("fkoth.admin")) {
+            sender.sendMessage(plugin.message(MessageKeys.NO_PERMISSION))
+            return
+        }
+        if (args.size != 1) {
+            sender.sendMessage(plugin.message(MessageKeys.USAGE_RELOAD))
+            return
+        }
+
+        plugin.reloadPlugin()
+        sender.sendMessage(plugin.message(MessageKeys.RELOAD_SUCCESS))
+    }
+
+    private fun handleDebug(sender: CommandSender, args: Array<out String>) {
+        if (!sender.hasPermission("fkoth.admin")) {
+            sender.sendMessage(plugin.message(MessageKeys.NO_PERMISSION))
+            return
+        }
+        if (args.size != 1) {
+            sender.sendMessage(plugin.message(MessageKeys.USAGE_DEBUG))
+            return
+        }
+
+        sender.sendMessage(plugin.message(MessageKeys.DEBUG_HEADER))
+        plugin.debugStatus().forEach { (name, value) ->
+            sender.sendMessage(
+                plugin.message(
+                    MessageKeys.DEBUG_LINE,
+                    mapOf("{name}" to name, "{value}" to value)
+                )
+            )
+        }
     }
 
     private fun handleStats(sender: CommandSender) {

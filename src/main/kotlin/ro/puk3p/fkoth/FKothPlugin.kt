@@ -23,6 +23,10 @@ class FKothPlugin : JavaPlugin() {
 
     private lateinit var messages: YamlConfiguration
     private var topHologramHook: TopHologramHook? = null
+    private var kothHookEnabled: Boolean = false
+    private var disbandHookEnabled: Boolean = false
+    private var placeholderEnabled: Boolean = false
+    private var hologramEnabled: Boolean = false
 
     override fun onEnable() {
         saveDefaultConfig()
@@ -56,6 +60,29 @@ class FKothPlugin : JavaPlugin() {
         service.save()
     }
 
+    fun reloadPlugin() {
+        reloadConfig()
+        loadMessages()
+        val rules = FkothRules(
+            ignoreNoFactionWinner = config.getBoolean(ConfigKeys.RULE_IGNORE_NO_FACTION_WINNER, true),
+            allowOfflinePlayerLookup = config.getBoolean(ConfigKeys.RULE_ALLOW_OFFLINE_PLAYER_LOOKUP, true)
+        )
+        service.updateRules(rules)
+
+        topHologramHook?.stop()
+        registerTopHologramHook()
+    }
+
+    fun debugStatus(): List<Pair<String, String>> {
+        return listOf(
+            "KoTH Hook" to if (kothHookEnabled) "ENABLED" else "DISABLED",
+            "Factions Disband Hook" to if (disbandHookEnabled) "ENABLED" else "DISABLED",
+            "PlaceholderAPI" to if (placeholderEnabled) "ENABLED" else "DISABLED",
+            "Top Hologram" to if (hologramEnabled) "ENABLED" else "DISABLED",
+            "Tracked Factions" to service.getTrackedFactionCount().toString()
+        )
+    }
+
     fun message(key: String, placeholders: Map<String, String> = emptyMap()): String {
         var text = messages.getString(key, key) ?: key
         for ((from, to) in placeholders) {
@@ -73,21 +100,25 @@ class FKothPlugin : JavaPlugin() {
     private fun registerPlaceholderExpansion() {
         val papiEnabled = config.getBoolean(ConfigKeys.PAPI_ENABLED, true)
         if (!papiEnabled) {
+            placeholderEnabled = false
             return
         }
 
         val papiPlugin = server.pluginManager.getPlugin("PlaceholderAPI")
         if (papiPlugin == null) {
+            placeholderEnabled = false
             return
         }
 
         FKothPlaceholderExpansion(service).register()
+        placeholderEnabled = true
         logger.info("[FKoth] PlaceholderAPI expansion registered.")
     }
 
     private fun registerKothHook() {
         val enabled = config.getBoolean(ConfigKeys.KOTH_ENABLED, true)
         if (!enabled) {
+            kothHookEnabled = false
             return
         }
 
@@ -108,21 +139,24 @@ class FKothPlugin : JavaPlugin() {
 
         val hook = KothHookListener(this, service, pluginName, endEventClass, paths)
         if (hook.register()) {
+            kothHookEnabled = true
             logger.info("[FKoth] KoTH hook enabled.")
         } else {
+            kothHookEnabled = false
             logger.warning("[FKoth] KoTH hook not enabled. Plugin/event not found.")
         }
     }
 
     private fun registerTopHologramHook() {
         val hook = TopHologramHook(this, service)
-        hook.start()
+        hologramEnabled = hook.start()
         topHologramHook = hook
     }
 
     private fun registerFactionDisbandHook() {
         val enabled = config.getBoolean(ConfigKeys.RULE_DELETE_ON_DISBAND, true)
         if (!enabled) {
+            disbandHookEnabled = false
             return
         }
 
@@ -133,7 +167,10 @@ class FKothPlugin : JavaPlugin() {
 
         val hook = FactionDisbandListener(this, service, eventClass)
         if (hook.register()) {
+            disbandHookEnabled = true
             logger.info("[FKoth] Factions disband cleanup hook enabled.")
+        } else {
+            disbandHookEnabled = false
         }
     }
 

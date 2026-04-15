@@ -15,14 +15,14 @@ class TopHologramHook(
     private var taskId: Int = -1
     private var warnedMissingApi: Boolean = false
 
-    fun start() {
+    fun start(): Boolean {
         if (!plugin.config.getBoolean(ConfigKeys.TOP_HOLOGRAM_ENABLED, true)) {
-            return
+            return false
         }
 
         if (plugin.server.pluginManager.getPlugin("DecentHolograms") == null) {
             plugin.logger.info("[FKoth] DecentHolograms not found. Top hologram hook disabled.")
-            return
+            return false
         }
 
         updateHologram()
@@ -33,6 +33,7 @@ class TopHologramHook(
         }, refreshSeconds * 20L, refreshSeconds * 20L)
 
         plugin.logger.info("[FKoth] Top hologram hook enabled (refresh: ${refreshSeconds}s).")
+        return true
     }
 
     fun stop() {

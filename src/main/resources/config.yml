@@ -29,6 +29,7 @@ placeholderapi:
   placeholders:
     - "fkoth_faction_name"
     - "fkoth_faction_wins"
+    - "fkoth_player_faction_wins_<player>"
     - "fkoth_faction_rank"
     - "fkoth_top_size"
     - "fkoth_top_1_name"
