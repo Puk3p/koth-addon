@@ -19,12 +19,31 @@ class FKothPlaceholderExpansion(
     override fun persist(): Boolean = true
 
     override fun onPlaceholderRequest(player: Player?, params: String): String {
+        if (params.equals("top_size", ignoreCase = true)) {
+            return service.getTrackedFactionCount().toString()
+        }
+
+        if (params.equals("faction_name", ignoreCase = true)) {
+            if (player == null) {
+                return "-"
+            }
+            return service.getFactionForPlayer(player) ?: "-"
+        }
+
         if (params.equals("faction_wins", ignoreCase = true)) {
             if (player == null) {
                 return "0"
             }
             val faction = service.getFactionForPlayer(player) ?: return "0"
             return service.getWinsForFaction(faction).toString()
+        }
+
+        if (params.equals("faction_rank", ignoreCase = true)) {
+            if (player == null) {
+                return "-"
+            }
+            val faction = service.getFactionForPlayer(player) ?: return "-"
+            return service.getRankForFaction(faction)?.toString() ?: "-"
         }
 
         val match = topRegex.matchEntire(params.lowercase()) ?: return ""

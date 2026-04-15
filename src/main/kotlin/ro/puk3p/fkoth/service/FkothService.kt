@@ -58,5 +58,13 @@ class FkothService(
 
     fun top(limit: Int): List<FactionWins> = repository.top(limit)
 
+    fun getRankForFaction(faction: String): Int? {
+        val ranked = repository.top(Int.MAX_VALUE)
+        val idx = ranked.indexOfFirst { it.faction.equals(faction, ignoreCase = true) }
+        return if (idx == -1) null else idx + 1
+    }
+
+    fun getTrackedFactionCount(): Int = repository.top(Int.MAX_VALUE).size
+
     fun save() = repository.save()
 }

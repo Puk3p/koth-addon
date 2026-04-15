@@ -27,7 +27,10 @@ top:
 placeholderapi:
   enabled: true
   placeholders:
+    - "fkoth_faction_name"
     - "fkoth_faction_wins"
+    - "fkoth_faction_rank"
+    - "fkoth_top_size"
     - "fkoth_top_1_name"
     - "fkoth_top_1_wins"
 
