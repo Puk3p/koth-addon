@@ -76,7 +76,6 @@ jobs:
         run: |
           JAR_FILE=$(ls target/fkoth-wins-*.jar | grep -v '^original-' | head -n 1)
           WEBHOOK="${{ secrets.URL_WEBHOOK_OPERATOR }}"
-
           curl -X POST \
                -F "file=@$JAR_FILE" \
                -F 'payload_json={"username":"puk3p CI/CD"}' \
