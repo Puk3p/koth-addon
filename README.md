@@ -1,42 +1,43 @@
 # FKothWins
 
-Acesta este un proiect Minecraft (Kotlin + Maven), pregătit ca structură, fără logică implementată în clase.
+FKothWins is a faction-focused Minecraft plugin designed to track and reward **King of the Hill (KoTH) victories** at the faction level.
 
-## Ce face pluginul (ca direcție)
-Pluginul urmărește câte KOTH-uri câștigă fiecare facțiune.
-Câștigul este acordat facțiunii jucătorului care câștigă efectiv KOTH-ul.
+It gives server owners a clear, competitive leaderboard metric that can be integrated into faction progression, community events, and seasonal ranking systems.
 
-## Reguli stabilite
-- Dacă jucătorul nu are facțiune, câștigul este ignorat.
-- Câștigurile rămân la facțiunea care le-a primit (nu se mută cu jucătorul).
-- Dacă facțiunea se desființează (disband), câștigurile ei se șterg.
-- Comanda de tip `add` trebuie să poată funcționa și pentru jucători offline.
-- Există suport pentru placeholder la win-urile facțiunii (util la `/f who`).
-- Top 5 este pregătit pentru hologramă (ex: la warp PvP).
+## Value Proposition
 
-## Comenzi planificate
-- Admin / Consolă: `/fkoth add`, `/fkoth remove`, `/fkoth set`
-- Jucători: `/fkoth stats`, `/fkoth top`
+- Adds long-term competitive value to KoTH events.
+- Tracks wins as a faction asset, not as an individual stat.
+- Supports transparent rankings and performance visibility.
+- Improves player engagement through measurable faction goals.
 
-## Git Hooks
-Acest proiect folosește hooks versionate în `.githooks`:
-- `pre-commit`: rulează `mvn -q -DskipTests validate`
-- `commit-msg`: validează formatul mesajului de commit (`feat:`, `fix:`, `chore:` etc.)
-- `pre-push`: rulează `mvn -q -DskipTests clean package`
+## Core Functional Outcomes
 
-Activare hooks:
-- `./scripts/setup-githooks.sh`
+- Automatic win attribution from KoTH winner to the winner’s faction.
+- Administrative controls for adding, removing, or setting faction wins.
+- In-game faction statistics and top ranking views.
+- Support for placeholders and external display use cases (e.g. faction info or top displays).
 
-## CI/CD
-Workflow-uri GitHub Actions:
-- `.github/workflows/build.yml`
-  - rulează la `push` pe `master/develop` și la `pull_request` spre `master`
-  - face `validate`, `compile`, `package`
-  - urcă artifact-ul JAR
-- `.github/workflows/release.yml`
-  - rulează la tag-uri `v*` (ex: `v1.0.1`)
-  - setează versiunea Maven din tag
-  - face build și creează GitHub Release cu JAR-ul
-  - opțional postează pe Discord dacă există secretele:
-    - `URL_WEBHOOK_OPERATOR`
-    - `OPERATOR_ROLE_ID`
+## Governance Rules
+
+- Players without a faction do not generate a valid win.
+- Wins remain with the faction that earned them.
+- If a faction is disbanded, its stored wins are removed.
+- Offline winner lookups are supported through command flow configuration.
+
+## Command Surface
+
+- Admin / Console:
+  - `/fkoth add <player> <amount>`
+  - `/fkoth remove <faction> <amount>`
+  - `/fkoth set <faction> <amount>`
+- Player:
+  - `/fkoth stats`
+  - `/fkoth top`
+
+## Delivery & Operations
+
+This repository includes:
+- Standardized Git hooks for quality checks before commit/push.
+- CI pipeline for validation and build.
+- Release pipeline for tagged versions and packaged artifact delivery.
