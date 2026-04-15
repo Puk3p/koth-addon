@@ -16,7 +16,7 @@ class FkothCommand(
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
-            sender.sendMessage("/fkoth <add|remove|set|stats|top>")
+            sender.sendMessage(plugin.message(MessageKeys.USAGE_MAIN))
             return true
         }
 
@@ -26,7 +26,7 @@ class FkothCommand(
             "set" -> handleSet(sender, args)
             "stats" -> handleStats(sender)
             "top" -> handleTop(sender)
-            else -> sender.sendMessage("/fkoth <add|remove|set|stats|top>")
+            else -> sender.sendMessage(plugin.message(MessageKeys.USAGE_MAIN))
         }
 
         return true
@@ -52,14 +52,14 @@ class FkothCommand(
             return
         }
         if (args.size < 3) {
-            sender.sendMessage("/fkoth add <player> <nr>")
+            sender.sendMessage(plugin.message(MessageKeys.USAGE_ADD))
             return
         }
 
         val playerName = args[1]
         val amount = args[2].toIntOrNull()
         if (amount == null || amount <= 0) {
-            sender.sendMessage("Număr invalid.")
+            sender.sendMessage(plugin.message(MessageKeys.INVALID_NUMBER))
             return
         }
 
@@ -71,7 +71,7 @@ class FkothCommand(
                     mapOf("{amount}" to amount.toString(), "{faction}" to (faction ?: "-"))
                 )
             )
-
+            AddByPlayerResult.PLAYER_OFFLINE -> sender.sendMessage(plugin.message(MessageKeys.PLAYER_OFFLINE))
             AddByPlayerResult.NO_FACTION -> sender.sendMessage(plugin.message(MessageKeys.IGNORED_NO_FACTION))
         }
     }
@@ -82,14 +82,14 @@ class FkothCommand(
             return
         }
         if (args.size < 3) {
-            sender.sendMessage("/fkoth remove <faction> <nr>")
+            sender.sendMessage(plugin.message(MessageKeys.USAGE_REMOVE))
             return
         }
 
         val faction = args[1]
         val amount = args[2].toIntOrNull()
         if (amount == null || amount <= 0) {
-            sender.sendMessage("Număr invalid.")
+            sender.sendMessage(plugin.message(MessageKeys.INVALID_NUMBER))
             return
         }
 
@@ -108,14 +108,14 @@ class FkothCommand(
             return
         }
         if (args.size < 3) {
-            sender.sendMessage("/fkoth set <faction> <nr>")
+            sender.sendMessage(plugin.message(MessageKeys.USAGE_SET))
             return
         }
 
         val faction = args[1]
         val amount = args[2].toIntOrNull()
         if (amount == null || amount < 0) {
-            sender.sendMessage("Număr invalid.")
+            sender.sendMessage(plugin.message(MessageKeys.INVALID_NUMBER))
             return
         }
 
@@ -134,7 +134,7 @@ class FkothCommand(
             return
         }
         if (sender !is Player) {
-            sender.sendMessage("Doar jucătorii pot folosi /fkoth stats.")
+            sender.sendMessage(plugin.message(MessageKeys.STATS_ONLY_PLAYER))
             return
         }
 
@@ -162,7 +162,7 @@ class FkothCommand(
         val topSize = plugin.config.getInt("top.list-size", 10)
         val top = plugin.service.top(topSize)
 
-        sender.sendMessage(plugin.message(MessageKeys.TOP_HEADER))
+        sender.sendMessage(plugin.message(MessageKeys.TOP_HEADER, mapOf("{size}" to topSize.toString())))
         top.forEachIndexed { index, item ->
             sender.sendMessage(
                 plugin.message(

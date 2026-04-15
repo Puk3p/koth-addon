@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+
+MSG_FILE="$1"
+MSG=$(head -n1 "$MSG_FILE")
+
+# Allowed: feat:, fix:, chore:, docs:, refactor:, test:, ci:, perf:, revert:
+case "$MSG" in
+  feat:*|fix:*|chore:*|docs:*|refactor:*|test:*|ci:*|perf:*|revert:*)
+    exit 0
+    ;;
+  *)
+    echo "[commit-msg] Invalid commit format. Use: <type>: <message>"
+    echo "Allowed types: feat, fix, chore, docs, refactor, test, ci, perf, revert"
+    exit 1
+    ;;
+esac

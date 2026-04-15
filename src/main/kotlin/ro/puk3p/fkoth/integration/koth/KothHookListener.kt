@@ -49,6 +49,9 @@ class KothHookListener(
             AddByPlayerResult.SUCCESS -> {
                 plugin.logger.info("[FKoth] Added 1 win to faction '$faction' (winner: $winnerName)")
             }
+            AddByPlayerResult.PLAYER_OFFLINE -> {
+                plugin.logger.info("[FKoth] Winner '$winnerName' is offline and offline lookup is disabled.")
+            }
 
             AddByPlayerResult.NO_FACTION -> {
                 plugin.logger.info("[FKoth] Winner '$winnerName' has no faction, win ignored.")

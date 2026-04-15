@@ -18,6 +18,25 @@ Câștigul este acordat facțiunii jucătorului care câștigă efectiv KOTH-ul.
 - Admin / Consolă: `/fkoth add`, `/fkoth remove`, `/fkoth set`
 - Jucători: `/fkoth stats`, `/fkoth top`
 
-## Observație
-În acest moment sunt create doar fișierele și structura proiectului.
-Clasele Kotlin sunt intenționat goale, conform cerinței.
+## Git Hooks
+Acest proiect folosește hooks versionate în `.githooks`:
+- `pre-commit`: rulează `mvn -q -DskipTests validate`
+- `commit-msg`: validează formatul mesajului de commit (`feat:`, `fix:`, `chore:` etc.)
+- `pre-push`: rulează `mvn -q -DskipTests clean package`
+
+Activare hooks:
+- `./scripts/setup-githooks.sh`
+
+## CI/CD
+Workflow-uri GitHub Actions:
+- `.github/workflows/build.yml`
+  - rulează la `push` pe `master/develop` și la `pull_request` spre `master`
+  - face `validate`, `compile`, `package`
+  - urcă artifact-ul JAR
+- `.github/workflows/release.yml`
+  - rulează la tag-uri `v*` (ex: `v1.0.1`)
+  - setează versiunea Maven din tag
+  - face build și creează GitHub Release cu JAR-ul
+  - opțional postează pe Discord dacă există secretele:
+    - `URL_WEBHOOK_OPERATOR`
+    - `OPERATOR_ROLE_ID`
