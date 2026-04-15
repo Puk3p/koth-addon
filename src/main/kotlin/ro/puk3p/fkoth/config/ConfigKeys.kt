@@ -4,6 +4,7 @@ object ConfigKeys {
     const val STORAGE_FILE = "storage.file"
     const val RULE_IGNORE_NO_FACTION_WINNER = "rules.ignore-no-faction-winner"
     const val RULE_DELETE_ON_DISBAND = "rules.delete-wins-on-faction-disband"
+    const val RULE_ALLOW_OFFLINE_PLAYER_LOOKUP = "rules.allow-offline-player-lookup"
     const val TOP_LIST_SIZE = "top.list-size"
 
     const val PAPI_ENABLED = "placeholderapi.enabled"

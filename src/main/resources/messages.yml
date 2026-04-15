@@ -1,10 +1,17 @@
 prefix: "&8[&6FKoth&8] "
 
 no-permission: "&cNu ai permisiune pentru această comandă."
+usage-main: "&eUtilizare: /fkoth <add|remove|set|stats|top>"
+usage-add: "&eUtilizare: /fkoth add <player> <nr>"
+usage-remove: "&eUtilizare: /fkoth remove <faction> <nr>"
+usage-set: "&eUtilizare: /fkoth set <faction> <nr>"
 player-not-found: "&cJucătorul nu a fost găsit."
+player-offline: "&eJucătorul este offline, iar lookup offline este dezactivat."
 faction-not-found: "&cFacțiunea nu a fost găsită."
 no-faction: "&eNu ai facțiune."
 ignored-no-faction: "&eWin ignorat: jucătorul nu are facțiune."
+invalid-number: "&cNumăr invalid."
+stats-only-player: "&eDoar jucătorii pot folosi această comandă."
 
 add-success: "&aS-au adăugat {amount} win-uri la facțiunea {faction}."
 remove-success: "&aS-au scăzut {amount} win-uri din facțiunea {faction}."
@@ -12,7 +19,7 @@ set-success: "&aWin-urile facțiunii {faction} au fost setate la {amount}."
 
 stats-self: "&6Facțiunea ta (&e{faction}&6) are &e{wins} &6win-uri KOTH."
 
-top-header: "&6&lTop 10 facțiuni KOTH"
+top-header: "&6&lTop {size} facțiuni KOTH"
 top-line: "&e#{position}. &f{faction} &7- &6{wins}"
 
 disband-cleanup: "&7Datele KOTH pentru facțiunea {faction} au fost șterse (disband)."

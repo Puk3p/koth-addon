@@ -9,6 +9,7 @@ import ro.puk3p.fkoth.integration.factions.FactionsUUIDAdapter
 import ro.puk3p.fkoth.integration.koth.KothHookListener
 import ro.puk3p.fkoth.integration.placeholder.FKothPlaceholderExpansion
 import ro.puk3p.fkoth.listener.FactionDisbandListener
+import ro.puk3p.fkoth.service.FkothRules
 import ro.puk3p.fkoth.service.FkothService
 import ro.puk3p.fkoth.storage.YamlFactionWinsRepository
 import ro.puk3p.fkoth.util.ColorUtil
@@ -30,7 +31,11 @@ class FKothPlugin : JavaPlugin() {
         val storageFile = config.getString(ConfigKeys.STORAGE_FILE, "faction-wins.yml") ?: "faction-wins.yml"
         val repository = YamlFactionWinsRepository(this, storageFile)
         val factionsAdapter = FactionsUUIDAdapter(this)
-        service = FkothService(repository, factionsAdapter)
+        val rules = FkothRules(
+            ignoreNoFactionWinner = config.getBoolean(ConfigKeys.RULE_IGNORE_NO_FACTION_WINNER, true),
+            allowOfflinePlayerLookup = config.getBoolean(ConfigKeys.RULE_ALLOW_OFFLINE_PLAYER_LOOKUP, true)
+        )
+        service = FkothService(repository, factionsAdapter, rules)
 
         val fkothCommand = FkothCommand(this)
         getCommand("fkoth")?.setExecutor(fkothCommand)

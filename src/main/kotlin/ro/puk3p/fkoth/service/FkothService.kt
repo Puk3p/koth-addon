@@ -1,5 +1,6 @@
 package ro.puk3p.fkoth.service
 
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import ro.puk3p.fkoth.integration.factions.FactionsAdapter
 import ro.puk3p.fkoth.model.FactionWins
@@ -7,17 +8,35 @@ import ro.puk3p.fkoth.storage.FactionWinsRepository
 
 enum class AddByPlayerResult {
     SUCCESS,
+    PLAYER_OFFLINE,
     NO_FACTION
 }
 
+data class FkothRules(
+    val ignoreNoFactionWinner: Boolean,
+    val allowOfflinePlayerLookup: Boolean
+)
+
 class FkothService(
     private val repository: FactionWinsRepository,
-    private val factionsAdapter: FactionsAdapter
+    private val factionsAdapter: FactionsAdapter,
+    private val rules: FkothRules
 ) {
 
     fun addWinsForPlayer(playerName: String, amount: Int): Pair<AddByPlayerResult, String?> {
+        if (!rules.allowOfflinePlayerLookup && Bukkit.getPlayerExact(playerName) == null) {
+            return AddByPlayerResult.PLAYER_OFFLINE to null
+        }
+
         val faction = factionsAdapter.getFactionNameByPlayerName(playerName)
-            ?: return AddByPlayerResult.NO_FACTION to null
+            ?: run {
+                if (!rules.ignoreNoFactionWinner) {
+                    val wildernessName = "Wilderness"
+                    repository.addWins(wildernessName, amount)
+                    return AddByPlayerResult.SUCCESS to wildernessName
+                }
+                return AddByPlayerResult.NO_FACTION to null
+            }
 
         repository.addWins(faction, amount)
         return AddByPlayerResult.SUCCESS to faction
