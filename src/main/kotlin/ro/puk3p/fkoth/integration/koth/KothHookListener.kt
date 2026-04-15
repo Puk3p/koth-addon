@@ -14,9 +14,8 @@ class KothHookListener(
     private val service: FkothService,
     private val kothPluginName: String,
     private val endEventClassName: String,
-    private val winnerPaths: List<String>
+    private val winnerPaths: List<String>,
 ) : Listener {
-
     fun register(): Boolean {
         if (plugin.server.pluginManager.getPlugin(kothPluginName) == null) {
             return false
@@ -73,7 +72,10 @@ class KothHookListener(
         return null
     }
 
-    private fun resolvePath(root: Any, path: String): Any? {
+    private fun resolvePath(
+        root: Any,
+        path: String,
+    ): Any? {
         var current: Any? = root
         for (methodName in path.split('.')) {
             if (current == null) {
@@ -94,11 +96,15 @@ class KothHookListener(
         }
     }
 
-    private fun callNoArg(target: Any, methodName: String): Any? {
+    private fun callNoArg(
+        target: Any,
+        methodName: String,
+    ): Any? {
         return runCatching {
-            val method = target.javaClass.methods.firstOrNull { it.name == methodName && it.parameterCount == 0 }
-                ?: target.javaClass.declaredMethods.firstOrNull { it.name == methodName && it.parameterCount == 0 }
-                ?: return null
+            val method =
+                target.javaClass.methods.firstOrNull { it.name == methodName && it.parameterCount == 0 }
+                    ?: target.javaClass.declaredMethods.firstOrNull { it.name == methodName && it.parameterCount == 0 }
+                    ?: return null
             method.isAccessible = true
             method.invoke(target)
         }.getOrNull()

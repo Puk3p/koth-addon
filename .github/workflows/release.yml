@@ -16,6 +16,8 @@ jobs:
     env:
       DISCORD_WEBHOOK: ${{ secrets.URL_WEBHOOK_OPERATOR }}
       DISCORD_ROLE_ID: ${{ secrets.OPERATOR_ROLE_ID }}
+      # Change this manually to your Discord thread/subchannel ID.
+      DISCORD_THREAD_ID: "1489410922706505871"
 
     steps:
       - name: Checkout code
@@ -35,10 +37,20 @@ jobs:
       - name: Set Maven version from tag
         run: mvn versions:set -DnewVersion=${{ steps.version.outputs.VERSION }} --batch-mode --no-transfer-progress
 
-      - name: "Step 1: Compile"
+      # Step 1 — Code formatting
+      - name: "Step 1: Spotless (code formatting)"
+        run: mvn spotless:check --batch-mode --no-transfer-progress
+
+      # Step 2 — Compile
+      - name: "Step 2: Compile"
         run: mvn clean compile --batch-mode --no-transfer-progress
 
-      - name: "Step 2: Package"
+      # Step 3 — Static analysis
+      - name: "Step 3: SpotBugs (static analysis)"
+        run: mvn spotbugs:check --batch-mode --no-transfer-progress
+
+      # Step 4 — Package JAR
+      - name: "Step 4: Package"
         run: mvn package -DskipTests --batch-mode --no-transfer-progress
 
       - name: Create GitHub Release
@@ -51,36 +63,46 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: "Step 3: Post Discord Embed"
+      - name: "Step 5: Post Discord Embed"
         if: ${{ env.DISCORD_WEBHOOK != '' && env.DISCORD_ROLE_ID != '' }}
         run: |
           JAR_NAME=$(basename "$(ls target/fkoth-wins-*.jar | grep -v '^original-' | head -n 1)")
-          WEBHOOK="$DISCORD_WEBHOOK"
+          if [ -n "$DISCORD_THREAD_ID" ]; then
+            WEBHOOK="${DISCORD_WEBHOOK}?thread_id=${DISCORD_THREAD_ID}"
+          else
+            WEBHOOK="${DISCORD_WEBHOOK}"
+          fi
 
           curl -X POST -H "Content-Type: application/json" -d '{
-            "username": "puk3p CI/CD",
-            "content": "<@&'"$DISCORD_ROLE_ID"'> New FKoth build available!",
+            "username": "Puk3p CI/CD",
+            "content": "<@&'"$DISCORD_ROLE_ID"'> New build available! ⬇️",
             "embeds": [
               {
-                "title": "FKothWins Release",
-                "description": "Automated deployment finished successfully.",
+                "title": "✨ koth-addon — Fresh Build Available",
+                "description": "**Deployment completed successfully**\nA new plugin version has just been generated and uploaded automatically.",
                 "color": 10181046,
                 "fields": [
-                  {"name": "Version", "value": "`'"${{ steps.version.outputs.VERSION }}"'`", "inline": true},
-                  {"name": "File", "value": "`'"$JAR_NAME"'`", "inline": true},
-                  {"name": "Pipeline", "value": "`GitHub Actions`", "inline": true}
+                  {"name": "🔖 Version", "value": "`'"${{ steps.version.outputs.VERSION }}"'`", "inline": true},
+                  {"name": "📂 File", "value": "`'"$JAR_NAME"'`", "inline": true},
+                  {"name": "⚙️ Pipeline", "value": "`GitHub Actions`", "inline": true}
                 ],
+                "thumbnail": {"url": "https://cdn-icons-png.flaticon.com/512/226/226777.png"},
+                "footer": {"text": "Puk3p Automated Build System"},
                 "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"
               }
             ]
           }' "$WEBHOOK"
 
-      - name: "Step 4: Upload JAR to Discord"
+      - name: "Step 6: Upload JAR to Discord"
         if: ${{ env.DISCORD_WEBHOOK != '' }}
         run: |
           JAR_FILE=$(ls target/fkoth-wins-*.jar | grep -v '^original-' | head -n 1)
-          WEBHOOK="$DISCORD_WEBHOOK"
+          if [ -n "$DISCORD_THREAD_ID" ]; then
+            WEBHOOK="${DISCORD_WEBHOOK}?thread_id=${DISCORD_THREAD_ID}"
+          else
+            WEBHOOK="${DISCORD_WEBHOOK}"
+          fi
           curl -X POST \
                -F "file=@$JAR_FILE" \
-               -F 'payload_json={"username":"puk3p CI/CD"}' \
+               -F 'payload_json={"username":"Puk3p CI/CD"}' \
                "$WEBHOOK"

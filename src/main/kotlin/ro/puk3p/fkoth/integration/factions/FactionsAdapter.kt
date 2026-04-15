@@ -4,6 +4,8 @@ import java.util.UUID
 
 interface FactionsAdapter {
     fun isAvailable(): Boolean
+
     fun getFactionNameByPlayerName(playerName: String): String?
+
     fun getFactionNameByPlayerUuid(uuid: UUID): String?
 }

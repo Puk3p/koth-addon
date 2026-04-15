@@ -6,12 +6,12 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.util.UUID
 
 class FactionsUUIDAdapter(
-    private val plugin: JavaPlugin
+    private val plugin: JavaPlugin,
 ) : FactionsAdapter {
-
-    private val fPlayersClass: Class<*>? = runCatching {
-        Class.forName("com.massivecraft.factions.FPlayers")
-    }.getOrNull()
+    private val fPlayersClass: Class<*>? =
+        runCatching {
+            Class.forName("com.massivecraft.factions.FPlayers")
+        }.getOrNull()
 
     override fun isAvailable(): Boolean {
         return plugin.server.pluginManager.getPlugin("Factions") != null && fPlayersClass != null
@@ -30,8 +30,9 @@ class FactionsUUIDAdapter(
 
     override fun getFactionNameByPlayerUuid(uuid: UUID): String? {
         val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
-        val fPlayer = getFPlayerByOfflinePlayer(offlinePlayer)
-            ?: getFPlayerById(uuid.toString())
+        val fPlayer =
+            getFPlayerByOfflinePlayer(offlinePlayer)
+                ?: getFPlayerById(uuid.toString())
         return extractFactionName(fPlayer)
     }
 
@@ -64,7 +65,11 @@ class FactionsUUIDAdapter(
         return tag
     }
 
-    private fun callFirst(target: Any, methodNames: List<String>, vararg args: Any?): Any? {
+    private fun callFirst(
+        target: Any,
+        methodNames: List<String>,
+        vararg args: Any?,
+    ): Any? {
         for (name in methodNames) {
             val result = callMethod(target, name, *args)
             if (result.isSuccess) {
@@ -74,12 +79,17 @@ class FactionsUUIDAdapter(
         return null
     }
 
-    private fun callMethod(target: Any, methodName: String, vararg args: Any?): Result<Any?> {
+    private fun callMethod(
+        target: Any,
+        methodName: String,
+        vararg args: Any?,
+    ): Result<Any?> {
         return runCatching {
             val clazz = if (target is Class<*>) target else target.javaClass
-            val method = clazz.methods.firstOrNull { it.name == methodName && it.parameterTypes.size == args.size }
-                ?: clazz.declaredMethods.firstOrNull { it.name == methodName && it.parameterTypes.size == args.size }
-                ?: throw NoSuchMethodException("$methodName/${args.size} not found on ${clazz.name}")
+            val method =
+                clazz.methods.firstOrNull { it.name == methodName && it.parameterTypes.size == args.size }
+                    ?: clazz.declaredMethods.firstOrNull { it.name == methodName && it.parameterTypes.size == args.size }
+                    ?: throw NoSuchMethodException("$methodName/${args.size} not found on ${clazz.name}")
 
             method.isAccessible = true
             if (target is Class<*>) method.invoke(null, *args) else method.invoke(target, *args)

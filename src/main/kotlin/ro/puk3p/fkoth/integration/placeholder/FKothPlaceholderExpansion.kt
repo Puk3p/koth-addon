@@ -5,9 +5,8 @@ import org.bukkit.entity.Player
 import ro.puk3p.fkoth.service.FkothService
 
 class FKothPlaceholderExpansion(
-    private val service: FkothService
+    private val service: FkothService,
 ) : PlaceholderExpansion() {
-
     private val topRegex = Regex("top_(\\d+)_(name|wins)")
     private val playerFactionWinsRegex = Regex("player_faction_wins_(.+)")
 
@@ -19,7 +18,10 @@ class FKothPlaceholderExpansion(
 
     override fun persist(): Boolean = true
 
-    override fun onPlaceholderRequest(player: Player?, params: String): String {
+    override fun onPlaceholderRequest(
+        player: Player?,
+        params: String,
+    ): String {
         val byPlayerMatch = playerFactionWinsRegex.matchEntire(params)
         if (byPlayerMatch != null) {
             val playerName = byPlayerMatch.groupValues[1]

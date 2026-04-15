@@ -9,9 +9,8 @@ import ro.puk3p.fkoth.service.FkothService
 class FactionDisbandListener(
     private val plugin: JavaPlugin,
     private val service: FkothService,
-    private val eventClassName: String
+    private val eventClassName: String,
 ) : Listener {
-
     fun register(): Boolean {
         val clazz = runCatching { Class.forName(eventClassName) }.getOrNull() ?: return false
         if (!Event::class.java.isAssignableFrom(clazz)) {
@@ -39,11 +38,15 @@ class FactionDisbandListener(
         plugin.logger.info("[FKoth] Faction disband detected. Removed KOTH wins for faction: $tag")
     }
 
-    private fun call(target: Any, method: String): Any? {
+    private fun call(
+        target: Any,
+        method: String,
+    ): Any? {
         return runCatching {
-            val m = target.javaClass.methods.firstOrNull { it.name == method && it.parameterCount == 0 }
-                ?: target.javaClass.declaredMethods.firstOrNull { it.name == method && it.parameterCount == 0 }
-                ?: return null
+            val m =
+                target.javaClass.methods.firstOrNull { it.name == method && it.parameterCount == 0 }
+                    ?: target.javaClass.declaredMethods.firstOrNull { it.name == method && it.parameterCount == 0 }
+                    ?: return null
             m.isAccessible = true
             m.invoke(target)
         }.getOrNull()

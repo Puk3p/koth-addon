@@ -9,9 +9,8 @@ import ro.puk3p.fkoth.util.ColorUtil
 
 class TopHologramHook(
     private val plugin: JavaPlugin,
-    private val service: FkothService
+    private val service: FkothService,
 ) {
-
     private var taskId: Int = -1
     private var warnedMissingApi: Boolean = false
 
@@ -28,9 +27,15 @@ class TopHologramHook(
         updateHologram()
 
         val refreshSeconds = plugin.config.getLong(ConfigKeys.TOP_HOLOGRAM_REFRESH_SECONDS, 15L).coerceAtLeast(5L)
-        taskId = plugin.server.scheduler.scheduleSyncRepeatingTask(plugin, Runnable {
-            updateHologram()
-        }, refreshSeconds * 20L, refreshSeconds * 20L)
+        taskId =
+            plugin.server.scheduler.scheduleSyncRepeatingTask(
+                plugin,
+                Runnable {
+                    updateHologram()
+                },
+                refreshSeconds * 20L,
+                refreshSeconds * 20L,
+            )
 
         plugin.logger.info("[FKoth] Top hologram hook enabled (refresh: ${refreshSeconds}s).")
         return true
@@ -64,41 +69,48 @@ class TopHologramHook(
     }
 
     private fun buildLines(): List<String> {
-        val title = plugin.config.getString(ConfigKeys.TOP_HOLOGRAM_TITLE, "&6&lTop 5 KOTH Factions")
-            ?: "&6&lTop 5 KOTH Factions"
+        val title =
+            plugin.config.getString(ConfigKeys.TOP_HOLOGRAM_TITLE, "&6&lTop 5 KOTH Factions")
+                ?: "&6&lTop 5 KOTH Factions"
 
         val entries = plugin.config.getInt(ConfigKeys.TOP_HOLOGRAM_ENTRIES, 5).coerceIn(1, 10)
         val top = service.top(entries)
 
-        val lineFormat = plugin.config.getString(
-            ConfigKeys.TOP_HOLOGRAM_LINE_FORMAT,
-            "&e#{position}. &f{faction} &7- &6{wins}"
-        ) ?: "&e#{position}. &f{faction} &7- &6{wins}"
+        val lineFormat =
+            plugin.config.getString(
+                ConfigKeys.TOP_HOLOGRAM_LINE_FORMAT,
+                "&e#{position}. &f{faction} &7- &6{wins}",
+            ) ?: "&e#{position}. &f{faction} &7- &6{wins}"
 
-        val emptyLineFormat = plugin.config.getString(
-            ConfigKeys.TOP_HOLOGRAM_EMPTY_LINE_FORMAT,
-            "&e#{position}. &7-"
-        ) ?: "&e#{position}. &7-"
+        val emptyLineFormat =
+            plugin.config.getString(
+                ConfigKeys.TOP_HOLOGRAM_EMPTY_LINE_FORMAT,
+                "&e#{position}. &7-",
+            ) ?: "&e#{position}. &7-"
 
         val lines = mutableListOf(ColorUtil.colorize(title))
         for (index in 1..entries) {
             val item = top.getOrNull(index - 1)
-            val line = if (item == null) {
-                emptyLineFormat
-                    .replace("{position}", index.toString())
-            } else {
-                lineFormat
-                    .replace("{position}", index.toString())
-                    .replace("{faction}", item.faction)
-                    .replace("{wins}", item.wins.toString())
-            }
+            val line =
+                if (item == null) {
+                    emptyLineFormat
+                        .replace("{position}", index.toString())
+                } else {
+                    lineFormat
+                        .replace("{position}", index.toString())
+                        .replace("{faction}", item.faction)
+                        .replace("{wins}", item.wins.toString())
+                }
             lines.add(ColorUtil.colorize(line))
         }
 
         return lines
     }
 
-    private fun upsertDecentHologram(location: Location, lines: List<String>) {
+    private fun upsertDecentHologram(
+        location: Location,
+        lines: List<String>,
+    ) {
         val dhApiClass = runCatching { Class.forName("eu.decentsoftware.holograms.api.DHAPI") }.getOrNull()
         if (dhApiClass == null) {
             if (!warnedMissingApi) {
@@ -117,33 +129,46 @@ class TopHologramHook(
         var hologram: Any? = runCatching { getMethod?.invoke(null, hologramId) }.getOrNull()
 
         if (hologram == null) {
-            val createWithLines = createMethods.firstOrNull {
-                it.parameterCount == 3 &&
-                    it.parameterTypes[0] == String::class.java &&
-                    Location::class.java.isAssignableFrom(it.parameterTypes[1]) &&
-                    java.util.List::class.java.isAssignableFrom(it.parameterTypes[2])
-            }
+            val createWithLines =
+                createMethods.firstOrNull {
+                    it.parameterCount == 3 &&
+                        it.parameterTypes[0] == String::class.java &&
+                        Location::class.java.isAssignableFrom(it.parameterTypes[1]) &&
+                        java.util.List::class.java.isAssignableFrom(it.parameterTypes[2])
+                }
 
-            val createWithPersistent = createMethods.firstOrNull {
-                it.parameterCount == 4 &&
-                    it.parameterTypes[0] == String::class.java &&
-                    Location::class.java.isAssignableFrom(it.parameterTypes[1]) &&
-                    (it.parameterTypes[2] == Boolean::class.java || it.parameterTypes[2] == java.lang.Boolean.TYPE) &&
-                    java.util.List::class.java.isAssignableFrom(it.parameterTypes[3])
-            }
+            val createWithPersistent =
+                createMethods.firstOrNull {
+                    it.parameterCount == 4 &&
+                        it.parameterTypes[0] == String::class.java &&
+                        Location::class.java.isAssignableFrom(it.parameterTypes[1]) &&
+                        (it.parameterTypes[2] == Boolean::class.java || it.parameterTypes[2] == java.lang.Boolean.TYPE) &&
+                        java.util.List::class.java.isAssignableFrom(it.parameterTypes[3])
+                }
 
-            val createSimple = createMethods.firstOrNull {
-                it.parameterCount == 2 &&
-                    it.parameterTypes[0] == String::class.java &&
-                    Location::class.java.isAssignableFrom(it.parameterTypes[1])
-            }
+            val createSimple =
+                createMethods.firstOrNull {
+                    it.parameterCount == 2 &&
+                        it.parameterTypes[0] == String::class.java &&
+                        Location::class.java.isAssignableFrom(it.parameterTypes[1])
+                }
 
-            hologram = when {
-                createWithLines != null -> runCatching { createWithLines.invoke(null, hologramId, location, lines) }.getOrNull()
-                createWithPersistent != null -> runCatching { createWithPersistent.invoke(null, hologramId, location, false, lines) }.getOrNull()
-                createSimple != null -> runCatching { createSimple.invoke(null, hologramId, location) }.getOrNull()
-                else -> null
-            }
+            hologram =
+                when {
+                    createWithLines != null -> runCatching { createWithLines.invoke(null, hologramId, location, lines) }.getOrNull()
+                    createWithPersistent != null ->
+                        runCatching {
+                            createWithPersistent.invoke(
+                                null,
+                                hologramId,
+                                location,
+                                false,
+                                lines,
+                            )
+                        }.getOrNull()
+                    createSimple != null -> runCatching { createSimple.invoke(null, hologramId, location) }.getOrNull()
+                    else -> null
+                }
 
             if (hologram == null) {
                 hologram = runCatching { getMethod?.invoke(null, hologramId) }.getOrNull()

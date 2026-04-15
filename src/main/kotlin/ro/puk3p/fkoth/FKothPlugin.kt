@@ -17,7 +17,6 @@ import ro.puk3p.fkoth.util.ColorUtil
 import java.io.File
 
 class FKothPlugin : JavaPlugin() {
-
     lateinit var service: FkothService
         private set
 
@@ -37,10 +36,11 @@ class FKothPlugin : JavaPlugin() {
         val storageFile = config.getString(ConfigKeys.STORAGE_FILE, "faction-wins.yml") ?: "faction-wins.yml"
         val repository = YamlFactionWinsRepository(this, storageFile)
         val factionsAdapter = FactionsUUIDAdapter(this)
-        val rules = FkothRules(
-            ignoreNoFactionWinner = config.getBoolean(ConfigKeys.RULE_IGNORE_NO_FACTION_WINNER, true),
-            allowOfflinePlayerLookup = config.getBoolean(ConfigKeys.RULE_ALLOW_OFFLINE_PLAYER_LOOKUP, true)
-        )
+        val rules =
+            FkothRules(
+                ignoreNoFactionWinner = config.getBoolean(ConfigKeys.RULE_IGNORE_NO_FACTION_WINNER, true),
+                allowOfflinePlayerLookup = config.getBoolean(ConfigKeys.RULE_ALLOW_OFFLINE_PLAYER_LOOKUP, true),
+            )
         service = FkothService(repository, factionsAdapter, rules)
 
         val fkothCommand = FkothCommand(this)
@@ -63,10 +63,11 @@ class FKothPlugin : JavaPlugin() {
     fun reloadPlugin() {
         reloadConfig()
         loadMessages()
-        val rules = FkothRules(
-            ignoreNoFactionWinner = config.getBoolean(ConfigKeys.RULE_IGNORE_NO_FACTION_WINNER, true),
-            allowOfflinePlayerLookup = config.getBoolean(ConfigKeys.RULE_ALLOW_OFFLINE_PLAYER_LOOKUP, true)
-        )
+        val rules =
+            FkothRules(
+                ignoreNoFactionWinner = config.getBoolean(ConfigKeys.RULE_IGNORE_NO_FACTION_WINNER, true),
+                allowOfflinePlayerLookup = config.getBoolean(ConfigKeys.RULE_ALLOW_OFFLINE_PLAYER_LOOKUP, true),
+            )
         service.updateRules(rules)
 
         topHologramHook?.stop()
@@ -79,11 +80,14 @@ class FKothPlugin : JavaPlugin() {
             "Factions Disband Hook" to if (disbandHookEnabled) "ENABLED" else "DISABLED",
             "PlaceholderAPI" to if (placeholderEnabled) "ENABLED" else "DISABLED",
             "Top Hologram" to if (hologramEnabled) "ENABLED" else "DISABLED",
-            "Tracked Factions" to service.getTrackedFactionCount().toString()
+            "Tracked Factions" to service.getTrackedFactionCount().toString(),
         )
     }
 
-    fun message(key: String, placeholders: Map<String, String> = emptyMap()): String {
+    fun message(
+        key: String,
+        placeholders: Map<String, String> = emptyMap(),
+    ): String {
         var text = messages.getString(key, key) ?: key
         for ((from, to) in placeholders) {
             text = text.replace(from, to)
@@ -123,19 +127,21 @@ class FKothPlugin : JavaPlugin() {
         }
 
         val pluginName = config.getString(ConfigKeys.KOTH_PLUGIN_NAME, "KoTH") ?: "KoTH"
-        val endEventClass = config.getString(
-            ConfigKeys.KOTH_END_EVENT_CLASS,
-            "subside.plugins.koth.events.KothEndEvent"
-        ) ?: "subside.plugins.koth.events.KothEndEvent"
+        val endEventClass =
+            config.getString(
+                ConfigKeys.KOTH_END_EVENT_CLASS,
+                "subside.plugins.koth.events.KothEndEvent",
+            ) ?: "subside.plugins.koth.events.KothEndEvent"
 
-        val paths = config.getStringList(ConfigKeys.KOTH_WINNER_PATHS).ifEmpty {
-            listOf(
-                "getWinner",
-                "getCappingPlayer",
-                "getRunningKoth.getWinner",
-                "getRunningKoth.getCappingPlayer"
-            )
-        }
+        val paths =
+            config.getStringList(ConfigKeys.KOTH_WINNER_PATHS).ifEmpty {
+                listOf(
+                    "getWinner",
+                    "getCappingPlayer",
+                    "getRunningKoth.getWinner",
+                    "getRunningKoth.getCappingPlayer",
+                )
+            }
 
         val hook = KothHookListener(this, service, pluginName, endEventClass, paths)
         if (hook.register()) {
@@ -160,10 +166,11 @@ class FKothPlugin : JavaPlugin() {
             return
         }
 
-        val eventClass = config.getString(
-            ConfigKeys.FACTIONS_DISBAND_EVENT_CLASS,
-            "com.massivecraft.factions.event.FactionDisbandEvent"
-        ) ?: "com.massivecraft.factions.event.FactionDisbandEvent"
+        val eventClass =
+            config.getString(
+                ConfigKeys.FACTIONS_DISBAND_EVENT_CLASS,
+                "com.massivecraft.factions.event.FactionDisbandEvent",
+            ) ?: "com.massivecraft.factions.event.FactionDisbandEvent"
 
         val hook = FactionDisbandListener(this, service, eventClass)
         if (hook.register()) {

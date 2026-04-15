@@ -11,10 +11,14 @@ import ro.puk3p.fkoth.service.AddByPlayerResult
 import java.util.Locale
 
 class FkothCommand(
-    private val plugin: FKothPlugin
+    private val plugin: FKothPlugin,
 ) : CommandExecutor, TabCompleter {
-
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>,
+    ): Boolean {
         if (args.isEmpty()) {
             sender.sendMessage(plugin.message(MessageKeys.USAGE_MAIN))
             return true
@@ -38,7 +42,7 @@ class FkothCommand(
         sender: CommandSender,
         command: Command,
         alias: String,
-        args: Array<out String>
+        args: Array<out String>,
     ): MutableList<String> {
         if (args.size == 1) {
             return mutableListOf("add", "remove", "set", "reload", "debug", "stats", "top")
@@ -48,7 +52,10 @@ class FkothCommand(
         return mutableListOf()
     }
 
-    private fun handleAdd(sender: CommandSender, args: Array<out String>) {
+    private fun handleAdd(
+        sender: CommandSender,
+        args: Array<out String>,
+    ) {
         if (!sender.hasPermission("fkoth.admin")) {
             sender.sendMessage(plugin.message(MessageKeys.NO_PERMISSION))
             return
@@ -67,19 +74,23 @@ class FkothCommand(
 
         val (status, faction) = plugin.service.addWinsForPlayer(playerName, amount)
         when (status) {
-            AddByPlayerResult.SUCCESS -> sender.sendMessage(
-                plugin.message(
-                    MessageKeys.ADD_SUCCESS,
-                    mapOf("{amount}" to amount.toString(), "{faction}" to (faction ?: "-"))
+            AddByPlayerResult.SUCCESS ->
+                sender.sendMessage(
+                    plugin.message(
+                        MessageKeys.ADD_SUCCESS,
+                        mapOf("{amount}" to amount.toString(), "{faction}" to (faction ?: "-")),
+                    ),
                 )
-            )
             AddByPlayerResult.PLAYER_NOT_FOUND -> sender.sendMessage(plugin.message(MessageKeys.PLAYER_NOT_FOUND))
             AddByPlayerResult.PLAYER_OFFLINE -> sender.sendMessage(plugin.message(MessageKeys.PLAYER_OFFLINE))
             AddByPlayerResult.NO_FACTION -> sender.sendMessage(plugin.message(MessageKeys.IGNORED_NO_FACTION))
         }
     }
 
-    private fun handleRemove(sender: CommandSender, args: Array<out String>) {
+    private fun handleRemove(
+        sender: CommandSender,
+        args: Array<out String>,
+    ) {
         if (!sender.hasPermission("fkoth.admin")) {
             sender.sendMessage(plugin.message(MessageKeys.NO_PERMISSION))
             return
@@ -100,12 +111,15 @@ class FkothCommand(
         sender.sendMessage(
             plugin.message(
                 MessageKeys.REMOVE_SUCCESS,
-                mapOf("{amount}" to amount.toString(), "{faction}" to faction)
-            )
+                mapOf("{amount}" to amount.toString(), "{faction}" to faction),
+            ),
         )
     }
 
-    private fun handleSet(sender: CommandSender, args: Array<out String>) {
+    private fun handleSet(
+        sender: CommandSender,
+        args: Array<out String>,
+    ) {
         if (!sender.hasPermission("fkoth.admin")) {
             sender.sendMessage(plugin.message(MessageKeys.NO_PERMISSION))
             return
@@ -126,12 +140,15 @@ class FkothCommand(
         sender.sendMessage(
             plugin.message(
                 MessageKeys.SET_SUCCESS,
-                mapOf("{amount}" to amount.toString(), "{faction}" to faction)
-            )
+                mapOf("{amount}" to amount.toString(), "{faction}" to faction),
+            ),
         )
     }
 
-    private fun handleReload(sender: CommandSender, args: Array<out String>) {
+    private fun handleReload(
+        sender: CommandSender,
+        args: Array<out String>,
+    ) {
         if (!sender.hasPermission("fkoth.admin")) {
             sender.sendMessage(plugin.message(MessageKeys.NO_PERMISSION))
             return
@@ -145,7 +162,10 @@ class FkothCommand(
         sender.sendMessage(plugin.message(MessageKeys.RELOAD_SUCCESS))
     }
 
-    private fun handleDebug(sender: CommandSender, args: Array<out String>) {
+    private fun handleDebug(
+        sender: CommandSender,
+        args: Array<out String>,
+    ) {
         if (!sender.hasPermission("fkoth.admin")) {
             sender.sendMessage(plugin.message(MessageKeys.NO_PERMISSION))
             return
@@ -160,8 +180,8 @@ class FkothCommand(
             sender.sendMessage(
                 plugin.message(
                     MessageKeys.DEBUG_LINE,
-                    mapOf("{name}" to name, "{value}" to value)
-                )
+                    mapOf("{name}" to name, "{value}" to value),
+                ),
             )
         }
     }
@@ -186,8 +206,8 @@ class FkothCommand(
         sender.sendMessage(
             plugin.message(
                 MessageKeys.STATS_SELF,
-                mapOf("{faction}" to faction, "{wins}" to wins.toString())
-            )
+                mapOf("{faction}" to faction, "{wins}" to wins.toString()),
+            ),
         )
     }
 
@@ -208,9 +228,9 @@ class FkothCommand(
                     mapOf(
                         "{position}" to (index + 1).toString(),
                         "{faction}" to item.faction,
-                        "{wins}" to item.wins.toString()
-                    )
-                )
+                        "{wins}" to item.wins.toString(),
+                    ),
+                ),
             )
         }
     }

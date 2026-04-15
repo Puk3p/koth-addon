@@ -10,21 +10,23 @@ enum class AddByPlayerResult {
     SUCCESS,
     PLAYER_NOT_FOUND,
     PLAYER_OFFLINE,
-    NO_FACTION
+    NO_FACTION,
 }
 
 data class FkothRules(
     val ignoreNoFactionWinner: Boolean,
-    val allowOfflinePlayerLookup: Boolean
+    val allowOfflinePlayerLookup: Boolean,
 )
 
 class FkothService(
     private val repository: FactionWinsRepository,
     private val factionsAdapter: FactionsAdapter,
-    private var rules: FkothRules
+    private var rules: FkothRules,
 ) {
-
-    fun addWinsForPlayer(playerName: String, amount: Int): Pair<AddByPlayerResult, String?> {
+    fun addWinsForPlayer(
+        playerName: String,
+        amount: Int,
+    ): Pair<AddByPlayerResult, String?> {
         val online = Bukkit.getPlayerExact(playerName)
         val offline = Bukkit.getOfflinePlayer(playerName)
         val knownPlayer = online != null || offline.hasPlayedBefore()
@@ -37,18 +39,19 @@ class FkothService(
             }
         }
 
-        val faction = factionsAdapter.getFactionNameByPlayerName(playerName)
-            ?: run {
-                if (!knownPlayer) {
-                    return AddByPlayerResult.PLAYER_NOT_FOUND to null
+        val faction =
+            factionsAdapter.getFactionNameByPlayerName(playerName)
+                ?: run {
+                    if (!knownPlayer) {
+                        return AddByPlayerResult.PLAYER_NOT_FOUND to null
+                    }
+                    if (!rules.ignoreNoFactionWinner) {
+                        val wildernessName = "Wilderness"
+                        repository.addWins(wildernessName, amount)
+                        return AddByPlayerResult.SUCCESS to wildernessName
+                    }
+                    return AddByPlayerResult.NO_FACTION to null
                 }
-                if (!rules.ignoreNoFactionWinner) {
-                    val wildernessName = "Wilderness"
-                    repository.addWins(wildernessName, amount)
-                    return AddByPlayerResult.SUCCESS to wildernessName
-                }
-                return AddByPlayerResult.NO_FACTION to null
-            }
 
         repository.addWins(faction, amount)
         return AddByPlayerResult.SUCCESS to faction
@@ -60,11 +63,20 @@ class FkothService(
 
     fun getWinsForFaction(faction: String): Int = repository.getWins(faction)
 
-    fun addWinsForFaction(faction: String, amount: Int): Int = repository.addWins(faction, amount)
+    fun addWinsForFaction(
+        faction: String,
+        amount: Int,
+    ): Int = repository.addWins(faction, amount)
 
-    fun removeWinsForFaction(faction: String, amount: Int): Int = repository.removeWins(faction, amount)
+    fun removeWinsForFaction(
+        faction: String,
+        amount: Int,
+    ): Int = repository.removeWins(faction, amount)
 
-    fun setWinsForFaction(faction: String, amount: Int): Int = repository.setWins(faction, amount)
+    fun setWinsForFaction(
+        faction: String,
+        amount: Int,
+    ): Int = repository.setWins(faction, amount)
 
     fun clearFaction(faction: String) = repository.removeFaction(faction)
 

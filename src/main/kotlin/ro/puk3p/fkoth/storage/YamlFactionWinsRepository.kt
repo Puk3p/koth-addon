@@ -8,9 +8,8 @@ import java.util.Locale
 
 class YamlFactionWinsRepository(
     private val plugin: JavaPlugin,
-    private val fileName: String
+    private val fileName: String,
 ) : FactionWinsRepository {
-
     private val file = File(plugin.dataFolder, fileName)
     private val winsByFaction = linkedMapOf<String, Int>()
 
@@ -29,7 +28,10 @@ class YamlFactionWinsRepository(
         return winsByFaction[key] ?: 0
     }
 
-    override fun addWins(faction: String, amount: Int): Int {
+    override fun addWins(
+        faction: String,
+        amount: Int,
+    ): Int {
         val key = resolveExistingKey(faction) ?: faction
         val newValue = (winsByFaction[key] ?: 0) + amount
         winsByFaction[key] = newValue.coerceAtLeast(0)
@@ -37,11 +39,17 @@ class YamlFactionWinsRepository(
         return winsByFaction[key] ?: 0
     }
 
-    override fun removeWins(faction: String, amount: Int): Int {
+    override fun removeWins(
+        faction: String,
+        amount: Int,
+    ): Int {
         return addWins(faction, -amount)
     }
 
-    override fun setWins(faction: String, amount: Int): Int {
+    override fun setWins(
+        faction: String,
+        amount: Int,
+    ): Int {
         val key = resolveExistingKey(faction) ?: faction
         winsByFaction[key] = amount.coerceAtLeast(0)
         save()
