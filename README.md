@@ -16,7 +16,8 @@ It gives server owners a clear, competitive leaderboard metric that can be integ
 - Automatic win attribution from KoTH winner to the winner’s faction.
 - Administrative controls for adding, removing, or setting faction wins.
 - In-game faction statistics and top ranking views.
-- Support for placeholders and external display use cases (e.g. faction info or top displays).
+- Top 5 hologram support for public ranking visibility (e.g. warp PvP).
+- Placeholder support for faction profile pages, scoreboards, and overlays.
 
 ## Governance Rules
 
@@ -31,9 +32,28 @@ It gives server owners a clear, competitive leaderboard metric that can be integ
   - `/fkoth add <player> <amount>`
   - `/fkoth remove <faction> <amount>`
   - `/fkoth set <faction> <amount>`
+  - `/fkoth reload`
+  - `/fkoth debug`
 - Player:
   - `/fkoth stats`
   - `/fkoth top`
+
+## Placeholder Coverage
+
+- `%fkoth_faction_name%`
+- `%fkoth_faction_wins%`
+- `%fkoth_faction_rank%`
+- `%fkoth_top_size%`
+- `%fkoth_top_1_name%` ... `%fkoth_top_10_name%`
+- `%fkoth_top_1_wins%` ... `%fkoth_top_10_wins%`
+- `%fkoth_player_faction_wins_<player>%` (player-targeted faction wins)
+
+## Integrations
+
+- KoTH event integration (automatic winner processing)
+- SaberFactions / Factions-compatible faction resolution
+- PlaceholderAPI expansion
+- DecentHolograms top display integration
 
 ## Delivery & Operations
 
