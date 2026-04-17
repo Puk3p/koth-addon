@@ -1,7 +1,10 @@
 package ro.puk3p.fkoth
 
 import org.bukkit.configuration.file.YamlConfiguration
+import org.bukkit.plugin.ServicePriority
 import org.bukkit.plugin.java.JavaPlugin
+import ro.puk3p.fkoth.api.FKothApi
+import ro.puk3p.fkoth.api.FKothApiImpl
 import ro.puk3p.fkoth.command.FkothCommand
 import ro.puk3p.fkoth.config.ConfigKeys
 import ro.puk3p.fkoth.config.MessageKeys
@@ -43,6 +46,8 @@ class FKothPlugin : JavaPlugin() {
             )
         service = FkothService(repository, factionsAdapter, rules)
 
+        registerPublicApi()
+
         val fkothCommand = FkothCommand(this)
         getCommand("fkoth")?.setExecutor(fkothCommand)
         getCommand("fkoth")?.tabCompleter = fkothCommand
@@ -58,6 +63,7 @@ class FKothPlugin : JavaPlugin() {
     override fun onDisable() {
         topHologramHook?.stop()
         service.save()
+        server.servicesManager.unregisterAll(this)
     }
 
     fun reloadPlugin() {
@@ -99,6 +105,12 @@ class FKothPlugin : JavaPlugin() {
 
     private fun loadMessages() {
         messages = YamlConfiguration.loadConfiguration(File(dataFolder, "messages.yml"))
+    }
+
+    private fun registerPublicApi() {
+        val api = FKothApiImpl(service)
+        server.servicesManager.register(FKothApi::class.java, api, this, ServicePriority.Normal)
+        logger.info("[FKoth] Public API registered in ServicesManager.")
     }
 
     private fun registerPlaceholderExpansion() {
